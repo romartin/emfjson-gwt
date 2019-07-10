@@ -11,28 +11,27 @@
  */
 package org.emfjson.gwt.map;
 
+import java.util.Map;
+
 import com.google.gwt.json.client.JSONValue;
 import org.eclipse.emf.common.util.Callback;
 import org.eclipse.emf.ecore.resource.Resource;
-
 import org.emfjson.gwt.common.Options;
-import org.emfjson.gwt.common.StreamHelper;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Map;
 
 import static com.google.gwt.json.client.JSONParser.parseStrict;
 
-public class JsonMapper {
+public class JsonMapper extends AbstractMapper {
 
+	@Override
 	public void parse(Resource resource, String content, Map<?, ?> options, Callback<Resource> callback) {
 		parse(resource, parseStrict(content), options, callback);
 	}
 
-	public void parse(Resource resource, InputStream inputStream, Map<?, ?> options, Callback<Resource> callback) {
-		parse(resource, StreamHelper.toString(inputStream), options, callback);
+	@Override
+	public String write(Resource resource, Map<?, ?> options) {
+		JSONValue json = writeToJSON(resource, options);
+		String value = json.toString();
+		return value;
 	}
 
 	public void parse(Resource resource, JSONValue value, Map<?, ?> options, Callback<Resource> callback) {
@@ -42,24 +41,11 @@ public class JsonMapper {
 		reader.parse(value, callback);
 	}
 
-	public JSONValue write(Resource resource, Map<?, ?> options) {
+	public JSONValue writeToJSON(Resource resource, Map<?, ?> options) {
 		if (resource == null) return null;
 
 		final JsonWriter writer = new JsonWriter(resource, Options.from(options));
 		return writer.toValue();
-	}
-
-	public void write(Resource resource, OutputStream stream, Map<?, ?> options) {
-		final JSONValue value = write(resource, options);
-
-		if (value != null) {
-			String stringValue = value.toString();
-			try {
-				stream.write(stringValue.getBytes());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 }

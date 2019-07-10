@@ -12,24 +12,15 @@
 package org.emfjson.gwt.resource;
 
 import org.eclipse.emf.common.util.URI;
-import org.emfjson.gwt.map.JsonMapper;
-import org.emfjson.gwt.map.Mapper;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 
 /**
- * Resource implementation meant to be used on the client side of a
- * GWT application.
- *
- * @author ghillairet
- * @since 0.4.0
+ * Default Resource Factory to create an XML Resource.
  */
-public class JsonResource extends MapperResource {
-
-	public JsonResource(URI uri) {
-		super(uri);
-	}
-
+public class XmlResourceFactory extends ResourceFactoryImpl {
 	@Override
-	protected Mapper getMapper() {
-		return new JsonMapper();
+	public Resource createResource(URI uri) {
+		return new XmlResourceViaMapper(uri);
 	}
 }
